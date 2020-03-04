@@ -1,26 +1,36 @@
 ARCH=$(shell uname -s)
 
 #for some strange reasons, python modules compiled with f2py do not work when using a separate build directory
+
+NETCDFFROOT    = /sw/rhel6-x64/netcdf/netcdf_fortran-4.4.3-gcc71
+
+#Intel MKL
+MKLROOT=/sw/rhel6-x64/intel/intel-18.0.4/mkl
+MKL_LIB = -L$(MKLROOT)/lib/intel64 -lmkl_gf_ilp64 -lmkl_sequential -lmkl_core -lpthread -lm -ldl
+MKL_INCLUDE = -I$(MKLROOT)/include
+FFT_LIB = -L/sw/rhel6-x64/numerics/fftw-3.3.7-openmp-gcc64/lib -lfftw3
+
 OBJDIR := src/
 SRCDIR := src/
 BINDIR := bin/
 LIBDIR := lib/
-PYTDIR := python/pyPamtra
+PYTDIR := python/pyPamtra/
 PYINSTDIR := ~/lib/python/
 
 gitHash    := $(shell git show -s --pretty=format:%H)
 gitVersion := $(shell git describe)-$(shell git name-rev --name-only HEAD)
 
-NCCONF = $(shell which nf-config || which nc-config) # on newer Ubuntu version C and Fortran libraries have their own configure scripts
+NCCONF = $(NETCDFFROOT)/bin/nf-config
 F2PY := $(shell which f2py2.7 || which f2py) # on newer Ubuntu systems, only f2py2.7 is available
 FC=gfortran
 CC=gcc
-FCFLAGS=-c -fPIC -Wunused  -cpp -J$(OBJDIR) -I$(OBJDIR)
+FCFLAGS=-c -fPIC -Wunused  -cpp -J$(OBJDIR) -I$(OBJDIR) $(MKL_INCLUDE)
 #FCFLAGS=-g -c -fPIC -Wunused -O0 -cpp -J$(OBJDIR) -I$(OBJDIR)
 
 NCFLAGS :=  $(shell $(NCCONF) --fflags)
-LFLAGS := -L/usr/lib/ -llapack -L$(LIBDIR) -L../$(LIBDIR) -lblas -lz -lfftw3
+LFLAGS := -L/usr/lib/ -L$(LIBDIR) -L../$(LIBDIR) $(MKL_LIB) #$(FFT_LIB)
 LDFLAGS := $(shell $(NCCONF) --flibs)
+LDFLAGS += -Wl,-rpath,$(MKLROOT)/lib/intel64 #-Wl,-rpath,/sw/rhel6-x64/numerics/fftw-3.3.7-openmp-gcc64/lib
 # it's messi but needed for ubuntu 16.04
 to_remove:=-Wl,-Bsymbolic-functions -Wl,-z,relro
 LDFLAGS := $(subst $(to_remove),,$(LDFLAGS))
@@ -233,8 +243,8 @@ py: $(PYTDIR)pyPamtraLib.so
 
 $(PYTDIR)pyPamtraLib.so:  $(SRCDIR)pyPamtraLib.f90 $(OBJDIR)pypamtralib.pyf $(FOBJECTS) | $(BINDIR)
 	cd $(OBJDIR) && $(F2PY) $(LFLAGS) -c --fcompiler=gnu95  ../$(OBJDIR)pypamtralib.pyf $(OBJECTS) ../$(SRCDIR)pyPamtraLib.f90
-	mv $(OBJDIR)/pyPamtraLib.so $(PYTDIR)
-	cp $(PYTDIR)/pamtra.py $(BINDIR)
+	mv $(OBJDIR)pyPamtraLib.cpython-37m-x86_64-linux-gnu.so $(PYTDIR)pyPamtraLib.so
+	cp $(PYTDIR)pamtra.py $(BINDIR)
 
 
 py_usStandard:

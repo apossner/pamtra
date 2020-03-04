@@ -13,3 +13,11 @@ See https://pamtra.readthedocs.io/ for documentation.
 
 If you want to join the mailing list you can find it here https://lists.uni-koeln.de/mailman/listinfo/meteo-pamtra. There you can ask any question related to the usage of PAMTRA.
 
+# Comment Anna Possner:
+for compilation on mistral load following modules
+>module load gcc
+>module load python/2.7.12
+
+Note that Python version is important. Newer version does not seem to have all packages needed by Pamtra
+
+ 
