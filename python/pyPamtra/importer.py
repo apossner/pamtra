@@ -2148,27 +2148,27 @@ def readIcon1momMeteogram(fname, descriptorFile, debug=False, verbosity=0, timei
   date_times = netCDF4.num2date(vals["time"][timeidx], vals["time"].units) # datetime autoconversion
   timestamp = netCDF4.date2num(date_times, "seconds since 1970-01-01 00:00:00") # to unix epoch timestamp (python uses nanoseconds int64 internally)
   pamData['timestamp'] = timestamp  
-  pamData['hgt_lev'] = np.tile(np.flip(vals[hgt_key],0),(len(timeidx),1)) # heights at which fields are defined
+  pamData['hgt_lev'] = np.tile(np.flipud(vals[hgt_key]),(len(timeidx),1)) # heights at which fields are defined
 
-  pamData['press']  = np.flip(vals['P'][timeidx],1)    # pressure 
-  pamData['temp']   = np.flip(vals['T'][timeidx],1)    # temperature
-  wind_u = np.flip(vals['U'][timeidx],1)               # zonal wind speed
-  wind_v = np.flip(vals['V'][timeidx],1)               # meridional wind speed
+  pamData['press']  = np.fliplr(vals['P'][timeidx])    # pressure 
+  pamData['temp']   = np.fliplr(vals['T'][timeidx])    # temperature
+  wind_u = np.fliplr(vals['U'][timeidx])               # zonal wind speed
+  wind_v = np.fliplr(vals['V'][timeidx])               # meridional wind speed
   pamData['wind_uv'] = np.hypot(wind_u, wind_v)
-  wind_w = np.flip(vals['W'][timeidx],1)               # vertical wind speed
+  wind_w = np.fliplr(vals['W'][timeidx])               # vertical wind speed
   pamData['wind_w'] = 0.5*(wind_w[:,:-1]+wind_w[:,1:])
-  pamData['relhum'] = np.flip(vals['REL_HUM'][timeidx],1)
+  pamData['relhum'] = np.fliplr(vals['REL_HUM'][timeidx])
 
   # Read hydrometeors content
   hydro_cmpl = np.zeros((len(timeidx),Nh,nhydros))
-  hydro_cmpl[...,0] = hydro_content[0]*np.flip(vals['QC'][timeidx],1)   # specific cloud water content
-  hydro_cmpl[...,1] = hydro_content[1]*np.flip(vals['QI'][timeidx],1)   # specific cloud ice content
-  hydro_cmpl[...,2] = hydro_content[2]*np.flip(vals['QR'][timeidx],1)   # rain mixing ratio
-  hydro_cmpl[...,3] = hydro_content[3]*np.flip(vals['QS'][timeidx],1)   # snow mixing ratio
+  hydro_cmpl[...,0] = hydro_content[0]*np.fliplr(vals['QC'][timeidx])   # specific cloud water content
+  hydro_cmpl[...,1] = hydro_content[1]*np.fliplr(vals['QI'][timeidx])   # specific cloud ice content
+  hydro_cmpl[...,2] = hydro_content[2]*np.fliplr(vals['QR'][timeidx])   # rain mixing ratio
+  hydro_cmpl[...,3] = hydro_content[3]*np.fliplr(vals['QS'][timeidx])   # snow mixing ratio
   if vals.has_key('QG'):
-    hydro_cmpl[...,4] = hydro_content[4]*np.flip(vals['QG'][timeidx],1)   # graupel mixing ratio
+    hydro_cmpl[...,4] = hydro_content[4]*np.fliplr(vals['QG'][timeidx])   # graupel mixing ratio
   else:
-    hydro_cmpl[...,4] = 0.0*np.flip(vals['QC'][timeidx],1)   # graupel set to 0 (avoid double descriptorFile)
+    hydro_cmpl[...,4] = 0.0*np.fliplr(vals['QC'][timeidx])   # graupel set to 0 (avoid double descriptorFile)
 
   pamData["hydro_q"] = hydro_cmpl
   
@@ -2252,34 +2252,34 @@ def readIcon2momMeteogram(fname, descriptorFile, debug=False, verbosity=0, timei
   date_times = netCDF4.num2date(vals["time"][timeidx], vals["time"].units) # datetime autoconversion
   timestamp = netCDF4.date2num(date_times, "seconds since 1970-01-01 00:00:00") # to unix epoch timestamp (python uses nanoseconds int64 internally)
   pamData['timestamp'] = timestamp  
-  pamData['hgt_lev'] = np.tile(np.flip(vals[hgt_key],0),(len(timeidx),1)) # heights at which fields are defined
+  pamData['hgt_lev'] = np.tile(np.flipud(vals[hgt_key]),(len(timeidx),1)) # heights at which fields are defined
 
-  pamData['press']  = np.flip(vals['P'][timeidx],1)    # pressure 
-  pamData['temp']   = np.flip(vals['T'][timeidx],1)    # temperature
-  wind_u = np.flip(vals['U'][timeidx],1)               # zonal wind speed
-  wind_v = np.flip(vals['V'][timeidx],1)               # meridional wind speed
+  pamData['press']  = np.fliplr(vals['P'][timeidx])    # pressure 
+  pamData['temp']   = np.fliplr(vals['T'][timeidx])    # temperature
+  wind_u = np.fliplr(vals['U'][timeidx])               # zonal wind speed
+  wind_v = np.fliplr(vals['V'][timeidx])               # meridional wind speed
   pamData['wind_uv'] = np.hypot(wind_u, wind_v)
-  wind_w = np.flip(vals['W'][timeidx],1)               # vertical wind speed
+  wind_w = np.fliplr(vals['W'][timeidx])               # vertical wind speed
   pamData['wind_w'] = 0.5*(wind_w[:,:-1]+wind_w[:,1:])
-  pamData['relhum'] = np.flip(vals['REL_HUM'][timeidx],1)
+  pamData['relhum'] = np.fliplr(vals['REL_HUM'][timeidx])
 
   # Read hydrometeors content
   hydro_cmpl = np.zeros((len(timeidx),Nh,nhydros))
-  hydro_cmpl[...,0] = hydro_content[0]*np.flip(vals['QC'][timeidx],1)   # specific cloud water content
-  hydro_cmpl[...,1] = hydro_content[1]*np.flip(vals['QI'][timeidx],1)   # specific cloud ice content
-  hydro_cmpl[...,2] = hydro_content[2]*np.flip(vals['QR'][timeidx],1)   # rain mixing ratio
-  hydro_cmpl[...,3] = hydro_content[3]*np.flip(vals['QS'][timeidx],1)   # snow mixing ratio
-  hydro_cmpl[...,4] = hydro_content[4]*np.flip(vals['QG'][timeidx],1)   # graupel mixing ratio
-  hydro_cmpl[...,5] = hydro_content[5]*np.flip(vals['QH'][timeidx],1)   # graupel mixing ratio # TODO report probably error encoding long name ...  should be hail mixing ratio
+  hydro_cmpl[...,0] = hydro_content[0]*np.fliplr(vals['QC'][timeidx])   # specific cloud water content
+  hydro_cmpl[...,1] = hydro_content[1]*np.fliplr(vals['QI'][timeidx])   # specific cloud ice content
+  hydro_cmpl[...,2] = hydro_content[2]*np.fliplr(vals['QR'][timeidx])   # rain mixing ratio
+  hydro_cmpl[...,3] = hydro_content[3]*np.fliplr(vals['QS'][timeidx])   # snow mixing ratio
+  hydro_cmpl[...,4] = hydro_content[4]*np.fliplr(vals['QG'][timeidx])   # graupel mixing ratio
+  hydro_cmpl[...,5] = hydro_content[5]*np.fliplr(vals['QH'][timeidx])   # graupel mixing ratio # TODO report probably error encoding long name ...  should be hail mixing ratio
 
   # Read hydrometeors number concentration
   hydro_num_cmpl = np.zeros((len(timeidx),Nh,nhydros))
-  hydro_num_cmpl[...,0] = hydro_content[0]*np.flip(vals['QNC'][timeidx],1)  # number concentration of cloud water
-  hydro_num_cmpl[...,1] = hydro_content[1]*np.flip(vals['QNI'][timeidx],1)  # number concentration ice
-  hydro_num_cmpl[...,2] = hydro_content[2]*np.flip(vals['QNR'][timeidx],1)  # number concentration droplets
-  hydro_num_cmpl[...,3] = hydro_content[3]*np.flip(vals['QNS'][timeidx],1)  # number concentration snow
-  hydro_num_cmpl[...,4] = hydro_content[4]*np.flip(vals['QNG'][timeidx],1)  # number concentration graupel
-  hydro_num_cmpl[...,5] = hydro_content[5]*np.flip(vals['QNH'][timeidx],1)  # number concentration hail 
+  hydro_num_cmpl[...,0] = hydro_content[0]*np.fliplr(vals['QNC'][timeidx])  # number concentration of cloud water
+  hydro_num_cmpl[...,1] = hydro_content[1]*np.fliplr(vals['QNI'][timeidx])  # number concentration ice
+  hydro_num_cmpl[...,2] = hydro_content[2]*np.fliplr(vals['QNR'][timeidx])  # number concentration droplets
+  hydro_num_cmpl[...,3] = hydro_content[3]*np.fliplr(vals['QNS'][timeidx])  # number concentration snow
+  hydro_num_cmpl[...,4] = hydro_content[4]*np.fliplr(vals['QNG'][timeidx])  # number concentration graupel
+  hydro_num_cmpl[...,5] = hydro_content[5]*np.fliplr(vals['QNH'][timeidx])  # number concentration hail 
 
   pamData["hydro_q"] = hydro_cmpl
   pamData["hydro_n"] = hydro_num_cmpl
@@ -2348,33 +2348,33 @@ def readIcon2momOnFlightTrack(fname, descriptorFile, debug=False, verbosity=0):
 #  variables3D_10m = ["u_10m","v_10m"]
 #  variables3D = ["temp","pres","qv","qc","qi","qr","qs","qg","qh","qnc","qni","qnr","qns","qng","qnh"]
   
-  pamData['hgt'] = np.swapaxes(np.flip(vals['height_2d'],0),0,1) # heights at which fields are defined
+  pamData['hgt'] = np.swapaxes(np.flipud(vals['height_2d']),0,1) # heights at which fields are defined
 
-  pamData['press'] = np.swapaxes(np.flip(vals['P'],0),0,1)    # pressure 
-  pamData['temp'] = np.swapaxes(np.flip(vals['T'],0),0,1)    # temperature
+  pamData['press'] = np.swapaxes(np.flipud(vals['P']),0,1)    # pressure 
+  pamData['temp'] = np.swapaxes(np.flipud(vals['T']),0,1)    # temperature
   #pamData['wind_u']  = np.flip(vals['U'][timeidx],1)    # zonal wind speed
   #pamData['wind_v']  = np.flip(vals['V'][timeidx],1)    # meridional wind speed
   # wind_w = np.flip(vals['W'][timeidx],1)    # vertical wind speed
   # pamData['wind_w'] = 0.5*(wind_w[:,:-1]+wind_w[:,1:])
-  pamData['relhum'] = np.swapaxes(np.flip(vals['REL_HUM'],0),0,1)
+  pamData['relhum'] = np.swapaxes(np.flipud(vals['REL_HUM']),0,1)
 
   # Read hydrometeors content
   hydro_cmpl = np.zeros((len(latidx),Nh,nhydros))
-  hydro_cmpl[...,0] = np.swapaxes(np.flip(vals['QC'],0),0,1)   # specific cloud water content
-  hydro_cmpl[...,1] = np.swapaxes(np.flip(vals['QI'],0),0,1)   # specific cloud ice content
-  hydro_cmpl[...,2] = np.swapaxes(np.flip(vals['QR'],0),0,1)   # rain mixing ratio
-  hydro_cmpl[...,3] = np.swapaxes(np.flip(vals['QS'],0),0,1)   # snow mixing ratio
-  hydro_cmpl[...,4] = np.swapaxes(np.flip(vals['QG'],0),0,1)   # graupel mixing ratio
-  hydro_cmpl[...,5] = np.swapaxes(np.flip(vals['QH'],0),0,1)   # graupel mixing ratio # TODO report probably error encoding long name ...  should be hail mixing ratio
+  hydro_cmpl[...,0] = np.swapaxes(np.flipud(vals['QC']),0,1)   # specific cloud water content
+  hydro_cmpl[...,1] = np.swapaxes(np.flipud(vals['QI']),0,1)   # specific cloud ice content
+  hydro_cmpl[...,2] = np.swapaxes(np.flipud(vals['QR']),0,1)   # rain mixing ratio
+  hydro_cmpl[...,3] = np.swapaxes(np.flipud(vals['QS']),0,1)   # snow mixing ratio
+  hydro_cmpl[...,4] = np.swapaxes(np.flipud(vals['QG']),0,1)   # graupel mixing ratio
+  hydro_cmpl[...,5] = np.swapaxes(np.flipud(vals['QH']),0,1)   # graupel mixing ratio # TODO report probably error encoding long name ...  should be hail mixing ratio
 
   # Read hydrometeors number concentration
   hydro_num_cmpl = np.zeros((len(latidx),Nh,nhydros))
-  hydro_num_cmpl[...,0] = np.swapaxes(np.flip(vals['QNC'],0),0,1)  # number concentration of cloud water
-  hydro_num_cmpl[...,1] = np.swapaxes(np.flip(vals['QNI'],0),0,1)  # number concentration ice
-  hydro_num_cmpl[...,2] = np.swapaxes(np.flip(vals['QNR'],0),0,1)  # number concentration droplets
-  hydro_num_cmpl[...,3] = np.swapaxes(np.flip(vals['QNS'],0),0,1)  # number concentration snow
-  hydro_num_cmpl[...,4] = np.swapaxes(np.flip(vals['QNG'],0),0,1)  # number concentration graupel
-  hydro_num_cmpl[...,5] = np.swapaxes(np.flip(vals['QNH'],0),0,1)  # number concentration hail 
+  hydro_num_cmpl[...,0] = np.swapaxes(np.flipud(vals['QNC']),0,1)  # number concentration of cloud water
+  hydro_num_cmpl[...,1] = np.swapaxes(np.flipud(vals['QNI']),0,1)  # number concentration ice
+  hydro_num_cmpl[...,2] = np.swapaxes(np.flipud(vals['QNR']),0,1)  # number concentration droplets
+  hydro_num_cmpl[...,3] = np.swapaxes(np.flipud(vals['QNS']),0,1)  # number concentration snow
+  hydro_num_cmpl[...,4] = np.swapaxes(np.flipud(vals['QNG']),0,1)  # number concentration graupel
+  hydro_num_cmpl[...,5] = np.swapaxes(np.flipud(vals['QNH']),0,1)  # number concentration hail 
 
   pamData["hydro_q"] = hydro_cmpl
   pamData["hydro_n"] = hydro_num_cmpl
